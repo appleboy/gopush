@@ -1,0 +1,11 @@
+apiVersion: v2
+name: gorush
+description: A push notification micro server using Gin framework written in Go (Golang)
+type: application
+version: 0.1.0
+appVersion: "1.13.0"
+dependencies:
+  - name: redis
+    version: ~14.1
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
