@@ -15,6 +15,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
+
+	structpb "github.com/golang/protobuf/ptypes/struct"
 )
 
 // Server is used to implement gorush grpc server.
@@ -94,7 +96,13 @@ func (s *Server) Send(ctx context.Context, in *proto.NotificationRequest) (*prot
 	if in.Data != nil {
 		notification.Data = map[string]interface{}{}
 		for k, v := range in.Data.Fields {
-			notification.Data[k] = v
+			if x, ok := v.GetKind().(*structpb.Value_StringValue); ok {
+				notification.Data[k] = x.StringValue
+			} else if x, ok := v.GetKind().(*structpb.Value_NumberValue); ok {
+				notification.Data[k] = x.NumberValue
+			} else if x, ok := v.GetKind().(*structpb.Value_BoolValue); ok {
+				notification.Data[k] = x.BoolValue
+			}
 		}
 	}
 
